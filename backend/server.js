@@ -11,7 +11,13 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://urban-infra-reporting.vercel.app"
+  ],
+  credentials: true
+}));
 app.use(bodyParser.json({ limit: '50mb' })); // Allow large images
 app.use(requestLogger); // Add request tracing
 
