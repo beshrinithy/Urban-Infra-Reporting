@@ -1,0 +1,20 @@
+apiVersion: 1
+
+deleteDatasources:
+  - name: CityMindDB
+    orgId: 1
+
+datasources:
+  - name: CityMindDB
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    user: citymind
+    secureJsonData:
+      password: citymind123
+    jsonData:
+      database: cityminddb
+      sslmode: disable
+      postgresVersion: 1500
+    isDefault: true
+    editable: true

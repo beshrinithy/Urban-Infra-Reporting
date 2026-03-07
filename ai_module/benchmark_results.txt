@@ -1,0 +1,11 @@
+BENCHMARK RESULTS
+=================
+
+[Scenario 1] Text Only
+Pipeline Latency: 10.64 ms
+Text Inference: 3.1 ms
+
+[Scenario 2] Multimodal (Text + Image)
+Pipeline Latency: 1216.61 ms
+Image Inference: 1213.34 ms
+Text Inference: 1.0 ms

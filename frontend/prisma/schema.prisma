@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String?  @db.Text
+  summary     String?
+  category    String
+  priority    String
+  severity    String
+  confidence  Float
+  aiMetadata  String? // JSON string to store device info, etc.
+  traceId     String? // Unique Trace ID for auditing
+  contactEmail String? // For Notifications
+  contactPhone String? // For SMS
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+  department  String?  // Feature 5: Auto-assigned Department
+  feedbackRating Int?  // Feature 2: Citizen Satisfaction (1-5)
+  feedbackComment String? // Feature 2: Feedback text
+
+  histories   ReportHistory[]
+}
+
+model ReportHistory {
+  id         Int      @id @default(autoincrement())
+  reportId   Int
+  oldStatus  String
+  newStatus  String
+  createdAt  DateTime @default(now())
+
+  report     Report   @relation(fields: [reportId], references: [id])
+}

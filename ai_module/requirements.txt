@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+requests
+tensorflow
+pillow
+numpy
+python-multipart
+scikit-learn
+pandas

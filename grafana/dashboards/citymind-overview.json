@@ -1,0 +1,1419 @@
+{
+    "annotations": {
+        "list": []
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "panels": [
+        {
+            "id": 100,
+            "title": "",
+            "type": "text",
+            "gridPos": {
+                "h": 2,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "options": {
+                "mode": "html",
+                "content": "<div style=\"text-align:center;padding:8px 0\"><h1 style=\"margin:0;font-size:22px;color:#7EB8DA;letter-spacing:2px\">📊 CITYMIND ANALYTICS DASHBOARD</h1><p style=\"margin:4px 0 0;color:#aaa;font-size:13px\">Urban Infrastructure Reporting — Real-time Overview</p></div>"
+            }
+        },
+        {
+            "id": 1,
+            "title": "Total Reports",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 0,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"Total\" FROM \"Report\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#6ED0E0"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#6ED0E0",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 7,
+            "title": "Total Users",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 4,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"Total\" FROM \"User\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#B877D9"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#B877D9",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 8,
+            "title": "⏳ Pending",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 8,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"Pending\" FROM \"Report\" WHERE \"status\" = 'Pending';",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#FF9830"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#FF9830",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 10,
+            "title": "🔄 In Progress",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 12,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"InProgress\" FROM \"Report\" WHERE \"status\" = 'In Progress';",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#5794F2",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 9,
+            "title": "✅ Resolved",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 16,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"Resolved\" FROM \"Report\" WHERE \"status\" = 'Resolved';",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#73BF69"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#73BF69",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 11,
+            "title": "🔥 High Priority",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 4,
+                "x": 20,
+                "y": 2
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT COUNT(*) AS \"High\" FROM \"Report\" WHERE \"priority\" = 'High';",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#F2495C"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#F2495C",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 2,
+            "title": "Reports by Category",
+            "type": "piechart",
+            "gridPos": {
+                "h": 9,
+                "w": 8,
+                "x": 0,
+                "y": 6
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT \"category\" AS metric, COUNT(*) AS value FROM \"Report\" GROUP BY \"category\" ORDER BY value DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Road"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FF6384"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Water"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#36A2EB"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Electricity"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FFCE56"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Garbage"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#4BC0C0"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Other"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#9966FF"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "values": [
+                        "value",
+                        "percent"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "single"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "values": false
+                }
+            },
+            "transformations": [
+                {
+                    "id": "seriesToRows",
+                    "options": {}
+                },
+                {
+                    "id": "organize",
+                    "options": {
+                        "excludeByName": {},
+                        "renameByName": {}
+                    }
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Reports by Status",
+            "type": "piechart",
+            "gridPos": {
+                "h": 9,
+                "w": 8,
+                "x": 8,
+                "y": 6
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT \"status\" AS metric, COUNT(*) AS value FROM \"Report\" GROUP BY \"status\" ORDER BY value DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Pending"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FF9830"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "In Progress"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#5794F2"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Processing"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#B877D9"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Resolved"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#73BF69"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "values": [
+                        "value",
+                        "percent"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "single"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "values": false
+                }
+            }
+        },
+        {
+            "id": 5,
+            "title": "Reports by Priority",
+            "type": "piechart",
+            "gridPos": {
+                "h": 9,
+                "w": 8,
+                "x": 16,
+                "y": 6
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT \"priority\" AS metric, COUNT(*) AS value FROM \"Report\" GROUP BY \"priority\" ORDER BY value DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "High"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#F2495C"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Medium"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FF9830"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Low"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#73BF69"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "table",
+                    "placement": "right",
+                    "values": [
+                        "value",
+                        "percent"
+                    ]
+                },
+                "tooltip": {
+                    "mode": "single"
+                },
+                "pieType": "donut",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "values": false
+                }
+            }
+        },
+        {
+            "id": 4,
+            "title": "📈 Reports Over Time",
+            "type": "timeseries",
+            "gridPos": {
+                "h": 8,
+                "w": 16,
+                "x": 0,
+                "y": 15
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  DATE_TRUNC('day', \"createdAt\") AS time,\n  COUNT(*) AS \"Reports\"\nFROM \"Report\"\nGROUP BY DATE_TRUNC('day', \"createdAt\")\nORDER BY time;",
+                    "format": "time_series",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "fillOpacity": 25,
+                        "lineWidth": 2,
+                        "spanNulls": true,
+                        "drawStyle": "line",
+                        "gradientMode": "scheme",
+                        "pointSize": 6,
+                        "showPoints": "always"
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single"
+                }
+            }
+        },
+        {
+            "id": 12,
+            "title": "⚡ Avg Confidence Score",
+            "type": "gauge",
+            "gridPos": {
+                "h": 8,
+                "w": 4,
+                "x": 16,
+                "y": 15
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT ROUND(AVG(\"confidence\")::numeric, 1) AS \"AI Confidence\" FROM \"Report\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "min": 0,
+                    "max": 100,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#F2495C",
+                                "value": null
+                            },
+                            {
+                                "color": "#FF9830",
+                                "value": 40
+                            },
+                            {
+                                "color": "#FFCE56",
+                                "value": 60
+                            },
+                            {
+                                "color": "#73BF69",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true
+            }
+        },
+        {
+            "id": 13,
+            "title": "👍 Avg Feedback Rating",
+            "type": "gauge",
+            "gridPos": {
+                "h": 8,
+                "w": 4,
+                "x": 20,
+                "y": 15
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT ROUND(AVG(\"feedbackRating\")::numeric, 2) AS \"Rating\" FROM \"Report\" WHERE \"feedbackRating\" IS NOT NULL;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "min": 0,
+                    "max": 5,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#F2495C",
+                                "value": null
+                            },
+                            {
+                                "color": "#FF9830",
+                                "value": 2
+                            },
+                            {
+                                "color": "#FFCE56",
+                                "value": 3
+                            },
+                            {
+                                "color": "#73BF69",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    "decimals": 1
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true
+            }
+        },
+        {
+            "id": 14,
+            "title": "🏗️ Category × Status Heatmap",
+            "type": "table",
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 23
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  \"category\",\n  COUNT(*) FILTER (WHERE \"status\" = 'Pending') AS \"Pending\",\n  COUNT(*) FILTER (WHERE \"status\" = 'In Progress') AS \"In Progress\",\n  COUNT(*) FILTER (WHERE \"status\" = 'Processing') AS \"Processing\",\n  COUNT(*) FILTER (WHERE \"status\" = 'Resolved') AS \"Resolved\",\n  COUNT(*) AS \"Total\"\nFROM \"Report\"\nGROUP BY \"category\"\nORDER BY COUNT(*) DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "center",
+                        "cellOptions": {
+                            "type": "color-text"
+                        }
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "category"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 130
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Total"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "color-background",
+                                    "mode": "gradient"
+                                }
+                            },
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "continuous-blues"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "showHeader": true,
+                "footer": {
+                    "show": true,
+                    "reducer": [
+                        "sum"
+                    ],
+                    "countRows": false
+                }
+            }
+        },
+        {
+            "id": 15,
+            "title": "📊 Priority × Severity Breakdown",
+            "type": "barchart",
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 23
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  \"priority\",\n  COUNT(*) FILTER (WHERE \"severity\" = 'Critical') AS \"Critical\",\n  COUNT(*) FILTER (WHERE \"severity\" = 'High') AS \"High\",\n  COUNT(*) FILTER (WHERE \"severity\" = 'Medium') AS \"Medium\",\n  COUNT(*) FILTER (WHERE \"severity\" = 'Low') AS \"Low\"\nFROM \"Report\"\nGROUP BY \"priority\"\nORDER BY \"priority\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "fillOpacity": 80,
+                        "gradientMode": "scheme",
+                        "stacking": {
+                            "mode": "normal"
+                        }
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Critical"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#F2495C"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "High"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FF9830"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Medium"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#FFCE56"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Low"
+                        },
+                        "properties": [
+                            {
+                                "id": "color",
+                                "value": {
+                                    "mode": "fixed",
+                                    "fixedColor": "#73BF69"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single"
+                },
+                "orientation": "horizontal",
+                "barWidth": 0.7,
+                "groupWidth": 0.7
+            }
+        },
+        {
+            "id": 16,
+            "title": "🏆 Community Upvotes — Top 10",
+            "type": "bargauge",
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 30
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  CONCAT('#', \"id\", ': ', LEFT(\"title\", 40)) AS metric,\n  \"upvotes\" AS value\nFROM \"Report\"\nWHERE \"upvotes\" > 0\nORDER BY \"upvotes\" DESC\nLIMIT 10;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-GrYlRd"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "values": true
+                },
+                "orientation": "horizontal",
+                "displayMode": "gradient",
+                "showUnfilled": true,
+                "minVizWidth": 0,
+                "minVizHeight": 10
+            }
+        },
+        {
+            "id": 17,
+            "title": "🗺️ Reports by Department",
+            "type": "barchart",
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 30
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  COALESCE(\"department\", 'Unassigned') AS \"Department\",\n  COUNT(*) AS \"Reports\"\nFROM \"Report\"\nGROUP BY \"department\"\nORDER BY COUNT(*) DESC;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "continuous-blues"
+                    },
+                    "custom": {
+                        "fillOpacity": 80,
+                        "gradientMode": "scheme"
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "legend": {
+                    "displayMode": "hidden"
+                },
+                "tooltip": {
+                    "mode": "single"
+                },
+                "orientation": "horizontal",
+                "barWidth": 0.6
+            }
+        },
+        {
+            "id": 18,
+            "title": "⏰ SLA Compliance",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 0,
+                "y": 37
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  ROUND(\n    100.0 * COUNT(*) FILTER (WHERE \"resolvedAt\" <= \"slaDeadline\") /\n    NULLIF(COUNT(*) FILTER (WHERE \"resolvedAt\" IS NOT NULL AND \"slaDeadline\" IS NOT NULL), 0)\n  , 1) AS \"SLA Met %\"\nFROM \"Report\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percent",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#F2495C",
+                                "value": null
+                            },
+                            {
+                                "color": "#FF9830",
+                                "value": 50
+                            },
+                            {
+                                "color": "#73BF69",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 19,
+            "title": "📅 Avg Resolution Time (days)",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 8,
+                "y": 37
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  ROUND(AVG(EXTRACT(EPOCH FROM (\"resolvedAt\" - \"createdAt\")) / 86400)::numeric, 1) AS \"Avg Days\"\nFROM \"Report\"\nWHERE \"resolvedAt\" IS NOT NULL;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#73BF69",
+                                "value": null
+                            },
+                            {
+                                "color": "#FF9830",
+                                "value": 5
+                            },
+                            {
+                                "color": "#F2495C",
+                                "value": 10
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 20,
+            "title": "📧 Reports with Contact Info",
+            "type": "stat",
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 16,
+                "y": 37
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  COUNT(*) FILTER (WHERE \"contactEmail\" IS NOT NULL OR \"contactPhone\" IS NOT NULL) AS \"With Contact\",\n  COUNT(*) AS \"Total\"\nFROM \"Report\";",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "fixed",
+                        "fixedColor": "#5794F2"
+                    },
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#5794F2",
+                                "value": null
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "options": {
+                "graphMode": "none",
+                "colorMode": "background_solid",
+                "textMode": "value",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ]
+                }
+            }
+        },
+        {
+            "id": 6,
+            "title": "📋 Recent Reports",
+            "type": "table",
+            "gridPos": {
+                "h": 9,
+                "w": 24,
+                "x": 0,
+                "y": 41
+            },
+            "datasource": {
+                "type": "postgres",
+                "uid": "P9F4FCD780EEFA832"
+            },
+            "targets": [
+                {
+                    "rawSql": "SELECT\n  \"id\" AS \"#\",\n  \"title\" AS \"Title\",\n  \"category\" AS \"Category\",\n  \"priority\" AS \"Priority\",\n  \"severity\" AS \"Severity\",\n  \"status\" AS \"Status\",\n  \"department\" AS \"Dept\",\n  \"upvotes\" AS \"Votes\",\n  ROUND(\"confidence\"::numeric, 1) AS \"AI %\",\n  TO_CHAR(\"createdAt\", 'YYYY-MM-DD HH24:MI') AS \"Created\"\nFROM \"Report\"\nORDER BY \"createdAt\" DESC\nLIMIT 25;",
+                    "format": "table",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "align": "left",
+                        "filterable": true
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "#"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 50
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Title"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 280
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Priority"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "type": "value",
+                                        "options": {
+                                            "High": {
+                                                "text": "🔴 High",
+                                                "color": "#F2495C"
+                                            },
+                                            "Medium": {
+                                                "text": "🟡 Medium",
+                                                "color": "#FF9830"
+                                            },
+                                            "Low": {
+                                                "text": "🟢 Low",
+                                                "color": "#73BF69"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Status"
+                        },
+                        "properties": [
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "type": "value",
+                                        "options": {
+                                            "Pending": {
+                                                "text": "⏳ Pending",
+                                                "color": "#FF9830"
+                                            },
+                                            "In Progress": {
+                                                "text": "🔄 In Progress",
+                                                "color": "#5794F2"
+                                            },
+                                            "Processing": {
+                                                "text": "⚙️ Processing",
+                                                "color": "#B877D9"
+                                            },
+                                            "Resolved": {
+                                                "text": "✅ Resolved",
+                                                "color": "#73BF69"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "options": {
+                "showHeader": true,
+                "footer": {
+                    "show": true,
+                    "reducer": [
+                        "count"
+                    ],
+                    "countRows": true
+                }
+            }
+        }
+    ],
+    "schemaVersion": 39,
+    "tags": [
+        "citymind",
+        "urban",
+        "infrastructure"
+    ],
+    "templating": {
+        "list": []
+    },
+    "time": {
+        "from": "now-90d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "CityMind - Urban Infrastructure Reports",
+    "uid": "citymind-overview",
+    "refresh": "30s"
+}

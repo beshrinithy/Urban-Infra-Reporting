@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <h1>Direct Login Test</h1>
+    <form id="loginForm">
+        <input type="email" id="email" value="admin@city.com" placeholder="Email"><br><br>
+        <input type="password" id="password" value="admin" placeholder="Password"><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch('http://localhost:5001/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                document.getElementById('result').innerHTML = 
+                    `<h2>Status: ${res.status}</h2>
+                     <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                
+                if (res.ok) {
+                    alert('Login successful! Token: ' + data.token.substring(0, 20) + '...');
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    `<h2 style="color:red">Error: ${error.message}</h2>`;
+            }
+        });
+    </script>
+</body>
+</html>

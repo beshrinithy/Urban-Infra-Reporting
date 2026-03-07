@@ -1,0 +1,407 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Camera, MapPin, Send, AlertTriangle, Image as ImageIcon, Loader2, CheckCircle, Brain, Activity, Zap } from "lucide-react";
+import { io } from "socket.io-client";
+
+// Initialize Socket.io (Singleton-ish outside component)
+const socket = io("http://localhost:5001");
+
+export default function ReportIssue() {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState(""); // User can leave empty for AI
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [locationError, setLocationError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState("");
+
+  // New State for Submission Result
+  const [submissionResult, setSubmissionResult] = useState<any>(null);
+  const [aiStatus, setAiStatus] = useState<"IDLE" | "PROCESSING" | "COMPLETE">("IDLE");
+  const [aiResult, setAiResult] = useState<any>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setImageError("File is too large (Max 5MB). Please compress it.");
+      setFile(null);
+      return;
+    }
+    if (selectedFile.size < 20 * 1024) {
+      setImageError("Image quality is low (Blurry/Small).");
+      // Allow it but warn
+    }
+    setImageError("");
+    setFile(selectedFile);
+  };
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setLocationError("Could not detect location. Please enable GPS.");
+        }
+      );
+    } else {
+      setLocationError("Geolocation is not supported by this browser.");
+    }
+
+    // Socket Listener
+    socket.on("report_updated", (data: any) => {
+      console.log("Socket Update Received:", data);
+
+      // Double check against current View
+      if (submissionResult?.id === data.id) {
+        setAiStatus("COMPLETE");
+        setAiResult(data);
+      } else {
+        // Try check ID from state callback
+        setAiResult((prev: any) => {
+          if (submissionResult && data.id === submissionResult.id) {
+            setAiStatus("COMPLETE");
+            return data;
+          }
+          return prev;
+        });
+      }
+    });
+
+    return () => {
+      socket.off("report_updated");
+    }
+  }, [submissionResult]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setAiStatus("PROCESSING"); // UI shows "Processing" immediately
+
+    let base64Image = null;
+    if (file) {
+      base64Image = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    try {
+      const res = await fetch("/api/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description: description + (file ? ` [Image Attached: ${file.name}]` : ""),
+          image: base64Image,
+          category,
+          contactEmail,
+          contactPhone,
+          latitude,
+          longitude,
+        }),
+      });
+
+      const data = await res.json();
+
+      // Success State
+      const reportData = {
+        id: data.id,
+        traceId: data.traceId || `TRC-${Math.floor(Math.random() * 10000)}`,
+        status: 'Processing'
+      };
+      setSubmissionResult(reportData);
+
+      // If backend was super fast and already returned Pending
+      if (data.status === 'Pending') {
+        setAiStatus("COMPLETE");
+        setAiResult(data);
+      }
+
+    } catch (e) {
+      console.error("Submission failed", e);
+      alert("Failed to submit report");
+      setIsSubmitting(false);
+      setAiStatus("IDLE");
+    }
+  };
+
+  // Reset function for new report
+  const resetForm = () => {
+    setSubmissionResult(null);
+    setAiStatus("IDLE");
+    setAiResult(null);
+    setIsSubmitting(false);
+    setTitle("");
+    setDescription("");
+    setCategory("");
+    setFile(null);
+  }
+
+  // RENDER: SUBMISSION SUCCESS VIEW
+  if (submissionResult) {
+    return (
+      <main className="min-h-screen bg-slate-50 py-12 px-4 font-sans flex flex-col items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          {/* Header */}
+          <div className="bg-emerald-500 p-6 text-center">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+              <CheckCircle className="text-white" size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-white">Report Submitted</h2>
+            <p className="text-emerald-100 text-sm mt-1">Trace ID: <span className="font-mono">{submissionResult.traceId}</span></p>
+          </div>
+
+          {/* Status Section */}
+          <div className="p-8 space-y-8">
+
+            {/* Progress Indicator */}
+            <div className="flex items-center justify-between relative">
+              {/* Line */}
+              <div className="absolute left-0 top-1/2 w-full h-1 bg-slate-100 -z-10"></div>
+
+              {/* Step 1: Received */}
+              <div className="flex flex-col items-center gap-2 bg-white px-2">
+                <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">1</div>
+                <span className="text-xs font-medium text-slate-500">Received</span>
+              </div>
+
+              {/* Step 2: AI Analysis */}
+              <div className="flex flex-col items-center gap-2 bg-white px-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-500 ${aiStatus === "PROCESSING" ? "bg-blue-500 animate-pulse text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]" :
+                    aiStatus === "COMPLETE" ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500"
+                  }`}>
+                  {aiStatus === "PROCESSING" ? <Loader2 size={14} className="animate-spin" /> :
+                    aiStatus === "COMPLETE" ? "2" : "2"}
+                </div>
+                <span className={`text-xs font-medium transition-colors ${aiStatus === "PROCESSING" ? "text-blue-600 font-bold" : "text-slate-500"}`}>
+                  AI Analysis
+                </span>
+              </div>
+
+              {/* Step 3: Pending Review */}
+              <div className="flex flex-col items-center gap-2 bg-white px-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${aiStatus === "COMPLETE" ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500"
+                  }`}>3</div>
+                <span className="text-xs font-medium text-slate-500">Pending Review</span>
+              </div>
+            </div>
+
+            {/* Dynamic AI Result Card */}
+            <div className={`transition-all duration-700 transform ${aiStatus === "COMPLETE" ? "translate-y-0 opacity-100" : "translate-y-4 opacity-100" // Always show card, but content changes
+              }`}>
+              {aiStatus === "PROCESSING" ? (
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
+                  <Loader2 className="animate-spin text-blue-500 mx-auto mb-3" size={24} />
+                  <h3 className="text-blue-900 font-bold text-lg">Analyzing content...</h3>
+                  <p className="text-blue-600/80 text-sm mt-1">Our AI is categorizing your issue and assessing severity.</p>
+                </div>
+              ) : (
+                <div className="bg-white border-2 border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                  <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <Brain size={12} /> AI Assessment Result
+                    </span>
+                    <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full">CONFIRMED</span>
+                  </div>
+                  <div className="p-4 grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-400 font-medium uppercase mb-1">Category</p>
+                      <p className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        {getCategoryIcon(aiResult?.category)}
+                        {aiResult?.category}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-400 font-medium uppercase mb-1">Severity</p>
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${getSeverityColor(aiResult?.severity)}`}>
+                        {aiResult?.severity}
+                      </span>
+                    </div>
+                    <div className="col-span-2 mt-2">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-400 font-medium uppercase">Confidence Score</span>
+                        <span className="text-slate-700 font-mono font-bold">{aiResult?.confidence ? (aiResult.confidence * 100).toFixed(1) : 0}%</span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-1000"
+                          style={{ width: `${(aiResult?.confidence || 0) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={resetForm}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition"
+            >
+              Submit Another Report
+            </button>
+
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // RENDER: FORM (Existing Form Logic)
+  return (
+    <main className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4 text-blue-600">
+            <Camera size={32} />
+          </div>
+          <h1 className="text-3xl font-extrabold text-slate-900">Report an Issue</h1>
+          <p className="text-slate-500 mt-2">Help us maintain our city infrastructure.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-100 space-y-6">
+
+          {/* Location Status */}
+          <div className={`p-4 rounded-xl flex items-center gap-3 text-sm font-medium ${locationError ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700'}`}>
+            <MapPin size={18} />
+            {locationError ? locationError :
+              (latitude !== null && longitude !== null) ? `Location Detected: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}` : "Detecting Location..."}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Issue Title</label>
+            <input
+              type="text"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-slate-900 placeholder:text-slate-400"
+              placeholder="e.g., Pothole on 5th Avenue"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Email (For Updates)</label>
+              <input
+                type="email"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-slate-900 placeholder:text-slate-400"
+                placeholder="name@example.com"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">Phone (For SMS)</label>
+              <input
+                type="tel"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-slate-900 placeholder:text-slate-400"
+                placeholder="+1 (555) 000-0000"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+            <textarea
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition h-32 text-slate-900 placeholder:text-slate-400"
+              placeholder="Describe the issue in detail..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Evidence (Optional)</label>
+            <div className={`border-2 border-dashed rounded-xl p-8 text-center hover:bg-slate-50 transition cursor-pointer relative ${imageError ? 'border-red-300 bg-red-50' : 'border-slate-300'}`}>
+              <input
+                type="file"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+              <div className="flex flex-col items-center gap-2 text-slate-500">
+                {imageError ? (
+                  <AlertTriangle size={32} className="text-red-500" />
+                ) : (
+                  <ImageIcon size={32} className={file ? "text-blue-500" : "text-slate-400"} />
+                )}
+
+                {imageError ? (
+                  <span className="font-medium text-red-600">{imageError}</span>
+                ) : file ? (
+                  <span className="font-medium text-blue-600">{file.name} attached</span>
+                ) : (
+                  <span>Click to upload photo evidence (Max 5MB)</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Category (Optional - AI will detect)</label>
+            <select
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition text-slate-900"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">Auto-Detect (AI)</option>
+              <option value="Road">Road / Pothole</option>
+              <option value="Garbage">Garbage / Sanitation</option>
+              <option value="Water">Water / Pipe Leak</option>
+              <option value="Electricity">Electricity / Street Light</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition flex items-center justify-center gap-2 disabled:opacity-70"
+          >
+            {isSubmitting ? (
+              <> <Loader2 className="animate-spin" /> Analyzing Issue... </>
+            ) : (
+              <> <Send size={20} /> Submit Report </>
+            )}
+          </button>
+        </form>
+      </div>
+    </main>
+  );
+}
+
+// Helpers
+function getCategoryIcon(cat: string) {
+  switch (cat) {
+    case "Road": return "🛣️";
+    case "Water": return "💧";
+    case "Garbage": return "🗑️";
+    case "Electricity": return "⚡";
+    default: return "📌";
+  }
+}
+
+function getSeverityColor(sev: string) {
+  switch (sev) {
+    case "Critical": return "bg-red-100 text-red-700";
+    case "High": return "bg-orange-100 text-orange-700";
+    case "Moderate": return "bg-yellow-100 text-yellow-700";
+    case "Low": return "bg-green-100 text-green-700";
+    default: return "bg-slate-100 text-slate-700";
+  }
+}

@@ -1,0 +1,72 @@
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\admin-panel\components\IncidentTable.tsx
+  308:65  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  463:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\admin-panel\page.tsx
+   58:18  warning  'e' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+   73:12  warning  'isLoading' is assigned a value but never used                                                                   @typescript-eslint/no-unused-vars
+  151:8   warning  React Hook useEffect has a missing dependency: 'fetchReports'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  232:22  warning  'e' is defined but never used                                                                                    @typescript-eslint/no-unused-vars
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\citizen\page.tsx
+   8:44  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  22:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\citizen\page.tsx:22:9
+  20 |         }
+  21 |
+> 22 |         setUser(parsedUser);
+     |         ^^^^^^^ Avoid calling setState() directly within an effect
+  23 |
+  24 |         fetch("/api/reports/citizen/reports", {
+  25 |             headers: { Authorization: `Bearer ${token}` }  react-hooks/set-state-in-effect
+  84:38  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      react/no-unescaped-entities
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\components\Map.tsx
+   10:1   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/ban-ts-comment
+   96:17  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/ban-ts-comment
+  180:45  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  189:65  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\components\Map.tsx:189:65
+  187 |                 {reports.map((report) => {
+  188 |                     // If no lat/long, mock it slightly around center for visualization demo
+> 189 |                     const lat = report.latitude || center[0] + (Math.random() - 0.5) * 0.05;
+      |                                                                 ^^^^^^^^^^^^^ Cannot call impure function
+  190 |                     const lng = report.longitude || center[1] + (Math.random() - 0.5) * 0.05;
+  191 |
+  192 |                     let icon = blueIcon;                            react-hooks/purity
+  190:66  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\components\Map.tsx:190:66
+  188 |                     // If no lat/long, mock it slightly around center for visualization demo
+  189 |                     const lat = report.latitude || center[0] + (Math.random() - 0.5) * 0.05;
+> 190 |                     const lng = report.longitude || center[1] + (Math.random() - 0.5) * 0.05;
+      |                                                                  ^^^^^^^^^^^^^ Cannot call impure function
+  191 |
+  192 |                     let icon = blueIcon;
+  193 |                     if (report.priority === "High") icon = redIcon;  react-hooks/purity
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\dashboard\page.tsx
+    9:56  warning  'Filter' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   46:9   warning  'router' is assigned a value but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  157:6   warning  React Hook useEffect has a missing dependency: 'fetchReports'. Either include it or remove the dependency array                                                                                                                                                                          react-hooks/exhaustive-deps
+  453:31  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  496:51  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+
+C:\Users\shrin\urban-infra-reporting\frontend\src\app\feed\components\ReportFeed.tsx
+  56:37  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+Γ£û 20 problems (9 errors, 11 warnings)
+

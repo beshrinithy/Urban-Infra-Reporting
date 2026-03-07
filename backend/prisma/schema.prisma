@@ -1,0 +1,74 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  CITIZEN
+  OFFICER
+  ADMIN
+  AUDITOR
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  image       String?
+  latitude    Float?   // Spatial coordinates for heatmap
+  longitude   Float?   // Spatial coordinates for heatmap
+  location    String?  // Human-readable address
+  summary     String?
+  category    String
+  priority    String
+  severity    String
+  confidence  Float
+  aiMetadata  String? // JSON string to store device info, etc.
+  traceId     String? // Unique Trace ID for auditing
+  contactEmail String? // For Notifications
+  contactPhone String? // For SMS
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+  department  String?  // Feature 5: Auto-assigned Department
+  feedbackRating Int?  // Feature 2: Citizen Satisfaction (1-5)
+  feedbackComment String? // Feature 2: Feedback text
+  upvotes         Int      @default(0) // Feature: Community Impact
+  
+  // Phase 1: RBAC & Workflow
+  assignedDepartment String?
+  assignedOfficerId  Int?
+  submittedBy        Int?       // Associate report with citizen who submitted it
+  slaDeadline        DateTime?
+  resolvedAt         DateTime?
+
+  aiExplainability   Json?      // { textModel, imageModel, fusedScore, device, latencyMs }
+
+  histories   ReportHistory[]
+}
+
+model ReportHistory {
+  id         Int      @id @default(autoincrement())
+  reportId   Int
+  oldStatus  String
+  newStatus  String
+  createdAt  DateTime @default(now())
+
+  report     Report   @relation(fields: [reportId], references: [id])
+
+  @@index([reportId])
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  role       String   @default("CITIZEN") // Legacy field (keep for safety if needed, or use Enum below)
+  // New RBAC fields
+  userRole   UserRole @default(CITIZEN)
+  department String?
+  createdAt  DateTime @default(now())
+}

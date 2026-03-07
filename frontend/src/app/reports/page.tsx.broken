@@ -1,0 +1,299 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+    AlertCircle,
+    CheckCircle2,
+    Clock,
+    Filter,
+    Brain,
+    MapPin,
+    Calendar,
+    TrendingUp,
+    AlertTriangle,
+    Info
+} from "lucide-react";
+
+interface Report {
+    id: string;
+    traceId: string;
+    description: string;
+    category: string;
+    severity: string;
+    confidence: number;
+    status: string;
+    location: string;
+    createdAt: string;
+    isDuplicate: boolean;
+    duplicateCount?: number;
+}
+
+type SeverityFilter = "All" | "Critical" | "High" | "Moderate" | "Low";
+type CategoryFilter = "All" | "Pothole" | "Streetlight" | "Garbage" | "Water" | "Other";
+type ConfidenceFilter = "All" | "High" | "Medium" | "Low";
+
+export default function ReportsPage() {
+    const [reports, setReports] = useState<Report[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("All");
+    const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("All");
+    const [confidenceFilter, setConfidenceFilter] = useState<ConfidenceFilter>("All");
+
+    useEffect(() => {
+        fetchReports();
+    }, []);
+
+    const fetchReports = async () => {
+        try {
+            const res = await fetch("http://localhost:5001/api/reports");
+            if (!res.ok) throw new Error("Failed to fetch reports");
+            const data = await res.json();
+            setReports(data);
+        } catch (err) {
+            console.error("Failed to fetch reports:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Smart filtering logic
+    const filteredReports = reports.filter(report => {
+        // Severity filter
+        if (severityFilter !== "All" && report.severity !== severityFilter) return false;
+
+        // Category filter
+        if (categoryFilter !== "All" && report.category !== categoryFilter) return false;
+
+        // Confidence filter
+        if (confidenceFilter !== "All") {
+            const conf = report.confidence * 100;
+            if (confidenceFilter === "High" && conf < 80) return false;
+            if (confidenceFilter === "Medium" && (conf < 60 || conf >= 80)) return false;
+            if (confidenceFilter === "Low" && conf >= 60) return false;
+        }
+
+        return true;
+    });
+
+    if (loading) {
+        return (
+            <div className="flex h-64 items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-slate-50">
+            <div className="container mx-auto px-6 py-8">
+                {/* Professional Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2">City Issue Monitoring Panel</h1>
+                    <p className="text-slate-600">Real-time tracking and management of civic infrastructure complaints</p>
+                </div>
+
+                {/* Impact Overview - 4 Stat Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                        <div className="text-sm text-slate-600 mb-1">Total Registered Complaints</div>
+                        <div className="text-3xl font-bold text-slate-900">{reports.length}</div>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                        <div className="text-sm text-slate-600 mb-1">Critical Cases Pending</div>
+                        <div className="text-3xl font-bold text-red-600">
+                            {reports.filter(r => r.severity === 'Critical' && r.status !== 'Resolved').length}
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                        <div className="text-sm text-slate-600 mb-1">Under Review</div>
+                        <div className="text-3xl font-bold text-yellow-600">
+                            {reports.filter(r => r.status === 'In Progress').length}
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                        <div className="text-sm text-slate-600 mb-1">Resolved This Week</div>
+                        <div className="text-3xl font-bold text-green-600">
+                            {reports.filter(r => r.status === 'Resolved').length}
+                        </div>
+                    </div>
+                </div>
+
+
+
+                {/* Filters */}
+                <div className="bg-white rounded-xl border border-slate-200 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                        <Filter size={16} className="text-slate-400" />
+                        <span className="text-sm font-semibold text-slate-700">Smart Filters</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Severity Filter */}
+                        <div>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2 block">
+                                Severity
+                            </label>
+                            <select
+                                value={severityFilter}
+                                onChange={(e) => setSeverityFilter(e.target.value as SeverityFilter)}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="All">All Severities</option>
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Moderate">Moderate</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+
+                        {/* Category Filter */}
+                        <div>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2 block">
+                                Category
+                            </label>
+                            <select
+                                value={categoryFilter}
+                                onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="All">All Categories</option>
+                                <option value="Pothole">Pothole</option>
+                                <option value="Streetlight">Streetlight</option>
+                                <option value="Garbage">Garbage</option>
+                                <option value="Water">Water</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        {/* Confidence Filter */}
+                        <div>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2 block">
+                                AI Confidence
+                            </label>
+                            <select
+                                value={confidenceFilter}
+                                onChange={(e) => setConfidenceFilter(e.target.value as ConfidenceFilter)}
+                                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="All">All Confidence Levels</option>
+                                <option value="High">High (&gt;80%)</option>
+                                <option value="Medium">Medium (60-80%)</option>
+                                <option value="Low">Low (&lt;60%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Reports Grid */}
+                {filteredReports.length === 0 ? (
+                    <div className="bg-white rounded-xl border border-slate-200 p-16 text-center">
+                        <Info className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-slate-900">No reports match your filters</h3>
+                        <p className="text-slate-500 text-sm mt-2">Try adjusting your filter criteria</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-4">
+                        {filteredReports.map((report) => (
+                            <ReportCard key={report.id} report={report} />
+                        ))}
+                    </div>
+                )}
+            </div>
+            );
+}
+
+            function ReportCard({report}: {report: Report }) {
+    const confidencePercent = Math.round(report.confidence * 100);
+
+    // Confidence color
+    const getConfidenceColor = (conf: number) => {
+        if (conf >= 80) return "text-green-600 bg-green-50 border-green-200";
+        if (conf >= 60) return "text-yellow-600 bg-yellow-50 border-yellow-200";
+            return "text-orange-600 bg-orange-50 border-orange-200";
+    };
+
+    // Severity color
+    const getSeverityColor = (severity: string) => {
+        switch (severity) {
+            case "Critical": return "text-red-600 bg-red-50 border-red-200";
+            case "High": return "text-orange-600 bg-orange-50 border-orange-200";
+            case "Moderate": return "text-yellow-600 bg-yellow-50 border-yellow-200";
+            case "Low": return "text-green-600 bg-green-50 border-green-200";
+            default: return "text-slate-600 bg-slate-50 border-slate-200";
+        }
+    };
+
+    // Category icon
+    const getCategoryIcon = (category: string) => {
+        switch (category) {
+            case "Pothole": return "🕳️";
+            case "Streetlight": return "💡";
+            case "Garbage": return "🗑️";
+            case "Water": return "💧";
+            default: return "📋";
+        }
+    };
+
+            return (
+            <div className="bg-white rounded-xl border border-slate-200 p-6 hover:shadow-md transition-shadow duration-200">
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-xs font-mono text-slate-400">#{report.traceId ? report.traceId.slice(0, 8) : 'N/A'}</span>
+                            {report.isDuplicate && (
+                                <span className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded border border-purple-200">
+                                    Duplicate ({report.duplicateCount})
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-slate-700 leading-relaxed">{report.description}</p>
+                    </div>
+                </div>
+
+                {/* AI Intelligence Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                    {/* Category Badge */}
+                    <div className="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg border border-blue-200 text-sm font-medium">
+                        <span>{getCategoryIcon(report.category)}</span>
+                        <span>{report.category}</span>
+                    </div>
+
+                    {/* Severity Badge */}
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium ${getSeverityColor(report.severity)}`}>
+                        {report.severity === "Critical" && <AlertCircle size={14} />}
+                        {report.severity === "High" && <AlertTriangle size={14} />}
+                        {report.severity === "Moderate" && <TrendingUp size={14} />}
+                        {report.severity === "Low" && <CheckCircle2 size={14} />}
+                        <span>{report.severity}</span>
+                    </div>
+
+                    {/* AI Confidence Badge */}
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium ${getConfidenceColor(confidencePercent)}`}>
+                        <Brain size={14} />
+                        <span>{confidencePercent}% Confidence</span>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-sm font-medium ${report.status === "Pending Review" ? "text-slate-600 bg-slate-50 border-slate-200" :
+                        report.status === "In Progress" ? "text-blue-600 bg-blue-50 border-blue-200" :
+                            report.status === "Resolved" ? "text-green-600 bg-green-50 border-green-200" :
+                                "text-slate-600 bg-slate-50 border-slate-200"
+                        }`}>
+                        <Clock size={14} />
+                        <span>{report.status}</span>
+                    </div>
+                </div>
+
+                {/* Metadata */}
+                <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-1">
+                        <MapPin size={12} />
+                        <span>{report.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <Calendar size={12} />
+                        <span>{new Date(report.createdAt).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            </div>
+            );
+}
