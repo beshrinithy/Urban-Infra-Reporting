@@ -19,7 +19,6 @@ exports.register = async (req, res) => {
             data: {
                 email,
                 password: hashedPassword,
-                role: userRole || 'CITIZEN',
                 userRole: userRole || 'CITIZEN',
                 department: department || null
             }
