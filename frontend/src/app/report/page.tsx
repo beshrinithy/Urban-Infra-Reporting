@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Camera, MapPin, Send, AlertTriangle, Image as ImageIcon, Loader2, CheckCircle, Brain, ArrowLeft } from "lucide-react";
 import { io } from "socket.io-client";
 import Link from "next/link";
-import { SOCKET_URL } from "../../lib/config";
+import { API_URL, SOCKET_URL } from "../../lib/config";
 
 // Initialize Socket.io (Singleton-ish outside component)
 const socket = io(SOCKET_URL);
@@ -117,9 +117,13 @@ export default function ReportIssue() {
     }
 
     try {
-      const res = await fetch("/api/reports", {
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch(`${API_URL}/api/reports`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` })
+        },
         body: JSON.stringify({
           title,
           description: description + (file ? ` [Image Attached: ${file.name}]` : ""),

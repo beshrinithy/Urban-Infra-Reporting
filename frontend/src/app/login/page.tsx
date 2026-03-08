@@ -29,6 +29,7 @@ function LoginForm() {
         setLoading(true);
 
         try {
+            console.log('API_URL:', API_URL); // Debug log
             const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

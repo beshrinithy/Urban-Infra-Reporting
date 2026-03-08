@@ -41,6 +41,8 @@ interface SystemHealth {
     };
 }
 
+import { API_URL } from '../../lib/config';
+
 export default function SystemPage() {
     const [data, setData] = useState<SystemHealth | null>(null);
     const [loading, setLoading] = useState(true);
@@ -48,7 +50,6 @@ export default function SystemPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
                 const res = await fetch(`${API_URL}/api/reports/system`);
                 if (!res.ok) throw new Error("Failed to fetch system data");
                 const json = await res.json();

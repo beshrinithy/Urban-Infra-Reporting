@@ -7,6 +7,7 @@ import {
     Briefcase, ArrowRight, Filter, RefreshCw
 } from "lucide-react";
 import { io } from "socket.io-client";
+import { API_URL, SOCKET_URL } from '../../lib/config';
 
 type Report = {
     id: number;
@@ -68,12 +69,10 @@ export default function OfficerDashboard() {
             const user = stored ? JSON.parse(stored) : {};
             const dept = user.department || "";
 
-            const API = process.env.NEXT_PUBLIC_API_URL || "";
-            // Pass department as query param + auth header (backend also filters by token's dept)
             const params = new URLSearchParams({ limit: "200" });
             if (dept) params.append("department", dept);
 
-            const res = await fetch(`${API}/api/reports?${params.toString()}`, {
+            const res = await fetch(`${API_URL}/api/reports?${params.toString()}`, {
                 headers: { "Authorization": "Bearer " + token }
             });
             if (!res.ok) throw new Error("Failed");
@@ -92,8 +91,7 @@ export default function OfficerDashboard() {
         if (!authChecked) return;
         fetchReports();
 
-        const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || API, { transports: ["websocket"] });
+        const socket = io(SOCKET_URL, { transports: ["websocket"] });
 
         socket.on("statusUpdate", () => fetchReports());
         socket.on("report_updated", () => fetchReports());

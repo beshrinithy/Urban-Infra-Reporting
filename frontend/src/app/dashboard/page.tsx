@@ -11,6 +11,7 @@ import {
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { io } from "socket.io-client";
+import { API_URL, SOCKET_URL } from '../../lib/config';
 
 // Dynamic Map Import to prevent SSR issues
 const Map = dynamic(() => import("../components/Map"), {
@@ -72,12 +73,10 @@ export default function Dashboard() {
   const fetchReports = async () => {
     try {
       setIsLoading(true);
-      const params = new URLSearchParams();
-      if (categoryFilter !== "All") params.append("category", categoryFilter);
-      if (statusFilter !== "All") params.append("status", statusFilter);
-      if (searchQuery) params.append("search", searchQuery);
-
-      const res = await fetch(`/api/reports?${params.toString()}`);
+      const token = localStorage.getItem("admin_token") || localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/reports`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!res.ok) throw new Error("API Failed");
 
       const json = await res.json();
@@ -95,7 +94,7 @@ export default function Dashboard() {
 
   const fetchHistory = async () => {
     try {
-      const histRes = await fetch("/api/history");
+      const histRes = await fetch(`${API_URL}/api/history`);
       if (histRes.ok) {
         setHistory(await histRes.json());
       }
@@ -104,8 +103,8 @@ export default function Dashboard() {
     }
   }
 
-  const checkHealth = () => {
-    fetch("/api/health")
+  const checkHealth = async () => {
+    fetch(`${API_URL}/api/health`)
       .then(res => res.json())
       .then(data => setHealth(data))
       .catch(() => setHealth({ db: "Error", ai: "Offline" }));
@@ -128,7 +127,7 @@ export default function Dashboard() {
     checkHealth();
 
     // 2. Real-Time Connection
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005", {
+    const socket = io(SOCKET_URL, {
       transports: ["websocket"], // Force websocket for better performance
       reconnectionAttempts: 5
     });

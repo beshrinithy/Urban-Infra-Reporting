@@ -20,6 +20,8 @@ interface Report {
     isDuplicate: boolean;
 }
 
+import { API_URL } from '../../lib/config';
+
 export default function ReportsPage() {
     const [reports, setReports] = useState<Report[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,7 +35,6 @@ export default function ReportsPage() {
 
     const fetchReports = async () => {
         try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
             const response = await fetch(`${API_URL}/api/reports`);
             const data = await response.json();
             // API returns { data: [...], total, page, totalPages }

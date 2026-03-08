@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { API_URL } from '../../../lib/config';
 
 interface Officer {
     id: number;
@@ -22,7 +23,6 @@ export default function AssignOfficerDropdown({ reportId, currentOfficerId, onAs
     useEffect(() => {
         const token = localStorage.getItem('admin_token');
         if (!token) return;
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
         fetch(`${API_URL}/api/reports/officers`, {
             headers: { Authorization: `Bearer ${token}` }
         })
@@ -37,7 +37,6 @@ export default function AssignOfficerDropdown({ reportId, currentOfficerId, onAs
         setSuccess(false);
         try {
             const token = localStorage.getItem('admin_token');
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
             const res = await fetch(`${API_URL}/api/reports/${reportId}/assign`, {
                 method: 'PATCH',
                 headers: {

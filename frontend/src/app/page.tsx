@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { ArrowRight, Eye, Camera, Globe, ChevronDown, AlertTriangle, Zap, BarChart3, MapPin } from "lucide-react";
 import FeatureTabs from "../components/FeatureTabs";
+import { API_URL } from '../lib/config';
 
 type Lang = "en" | "hi" | "kn" | "te" | "ta";
 
@@ -102,19 +103,9 @@ export default function Home() {
 
   const content = t[lang];
 
-  // Close lang dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (langRef.current && !langRef.current.contains(e.target as Node)) setIsLangOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
         const res = await fetch(`${API_URL}/api/reports/stats/public`, {
           cache: 'no-store'
         });

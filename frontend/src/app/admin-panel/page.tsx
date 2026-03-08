@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { io } from "socket.io-client";
+import { API_URL, SOCKET_URL } from '../../lib/config';
 import 'leaflet/dist/leaflet.css';
 
 const MapContainer = dynamic(() => import('react-leaflet').then(m => m.MapContainer), { ssr: false });
@@ -107,7 +108,6 @@ export default function AdminPanel() {
             params.append("limit", "100");
 
             const token = localStorage.getItem("admin_token") || localStorage.getItem("token") || "";
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
             const res = await fetch(`${API_URL}/api/reports?${params.toString()}`, {
                 headers: { "Authorization": "Bearer " + token }
             });
@@ -148,7 +148,7 @@ export default function AdminPanel() {
         setCurrentPage(1);
 
         // Socket Connection
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005", { transports: ["websocket"] });
+        const socket = io(SOCKET_URL, { transports: ["websocket"] });
 
         socket.on("status_update", (data: { reportId: number }) => {
             console.log("Live Update:", data);

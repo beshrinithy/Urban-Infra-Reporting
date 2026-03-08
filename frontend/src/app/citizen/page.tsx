@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, FileText, CheckCircle, Clock, Plus, ExternalLink, Star } from "lucide-react";
 import Link from "next/link";
 import { io } from "socket.io-client";
+import { API_URL, SOCKET_URL } from '../../lib/config';
 
 type Report = {
     id: number;
@@ -20,10 +21,10 @@ export default function CitizenDashboard() {
     const router = useRouter();
 
     const [authChecked, setAuthChecked] = useState(false);
-    const [userName, setUserName] = useState<string>("Citizen");
     const [reports, setReports] = useState<Report[]>([]);
     const [stats, setStats] = useState({ total: 0, pending: 0, resolved: 0 });
     const [isLoading, setIsLoading] = useState(true);
+    const [userName, setUserName] = useState("Citizen");
 
     // Rating State
     const [ratingReportId, setRatingReportId] = useState<number | null>(null);
@@ -32,27 +33,29 @@ export default function CitizenDashboard() {
     const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("token") || localStorage.getItem("admin_token");
-        const role = localStorage.getItem("role");
-        const userStr = localStorage.getItem("admin_user");
-
-        if (!token || role !== "CITIZEN") {
-            router.replace("/login");
+        const token = localStorage.getItem('admin_token');
+        const userStr = localStorage.getItem('admin_user');
+        if (!token || !userStr) {
+            router.replace('/login?redirect=/citizen');
             return;
         }
-
-        if (userStr) {
-            try {
-                const parsed = JSON.parse(userStr);
-                setUserName(parsed.name || parsed.email?.split("@")[0] || "Citizen");
-            } catch { }
+        try {
+            const user = JSON.parse(userStr);
+            if (user.userRole !== 'CITIZEN') {
+                router.replace('/login');
+                return;
+            }
+            setUserName(user.email?.split('@')[0] || 'Citizen');
+            setAuthChecked(true);
+        } catch {
+            router.replace('/login');
         }
 
         setAuthChecked(true);
         fetchMyReports(token);
 
         // Real-time updates
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005");
+        const socket = io(SOCKET_URL);
         socket.on("report_updated", () => fetchMyReports(token));
         socket.on("report_assigned", () => fetchMyReports(token));
         return () => { socket.disconnect(); };
@@ -61,7 +64,6 @@ export default function CitizenDashboard() {
     const fetchMyReports = async (token: string) => {
         try {
             setIsLoading(true);
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
             const res = await fetch(`${API_URL}/api/reports/my-reports`, {
                 headers: { "Authorization": "Bearer " + token }
             });
@@ -90,7 +92,6 @@ export default function CitizenDashboard() {
         setIsSubmittingRating(true);
         try {
             const token = localStorage.getItem("token") || localStorage.getItem("admin_token") || "";
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
             const res = await fetch(`${API_URL}/api/reports/feedback`, {
                 method: "POST",
                 headers: {
