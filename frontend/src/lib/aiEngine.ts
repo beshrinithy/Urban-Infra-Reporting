@@ -1,7 +1,7 @@
 // This function now calls the Python AI Backend
 import { API_URL } from './config';
 
-export async function analyzeIssue(description: string, existingDescriptions: string = []) {
+export async function analyzeIssue(description: string, existingDescriptions: string[] = []) {
   try {
     // 1. Detect Duplicates
     let duplicateScore = 0;
