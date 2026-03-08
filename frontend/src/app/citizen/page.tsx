@@ -52,7 +52,7 @@ export default function CitizenDashboard() {
         fetchMyReports(token);
 
         // Real-time updates
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://10.175.218.222:5005");
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005");
         socket.on("report_updated", () => fetchMyReports(token));
         socket.on("report_assigned", () => fetchMyReports(token));
         return () => { socket.disconnect(); };

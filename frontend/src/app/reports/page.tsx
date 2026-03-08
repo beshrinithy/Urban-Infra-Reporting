@@ -33,7 +33,8 @@ export default function ReportsPage() {
 
     const fetchReports = async () => {
         try {
-            const response = await fetch("http://10.175.218.222:5005/api/reports");
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
+            const response = await fetch(`${API_URL}/api/reports`);
             const data = await response.json();
             // API returns { data: [...], total, page, totalPages }
             setReports(Array.isArray(data) ? data : (data.data || []));

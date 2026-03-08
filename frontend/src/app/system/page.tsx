@@ -48,7 +48,8 @@ export default function SystemPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await fetch("http://10.175.218.222:5005/api/reports/system");
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
+                const res = await fetch(`${API_URL}/api/reports/system`);
                 if (!res.ok) throw new Error("Failed to fetch system data");
                 const json = await res.json();
                 setData(json);

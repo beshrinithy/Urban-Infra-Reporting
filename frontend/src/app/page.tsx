@@ -114,7 +114,8 @@ export default function Home() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch('http://localhost:5005/api/reports/stats/public', {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
+        const res = await fetch(`${API_URL}/api/reports/stats/public`, {
           cache: 'no-store'
         });
         if (!res.ok) throw new Error('Stats API unavailable');

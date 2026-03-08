@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 import Link from "next/link";
 
 // Initialize Socket.io (Singleton-ish outside component)
-const socket = io("http://10.175.218.222:5005");
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005");
 
 export default function ReportIssue() {
   const [title, setTitle] = useState("");

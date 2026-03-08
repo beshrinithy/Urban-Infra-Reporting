@@ -22,7 +22,8 @@ export default function AssignOfficerDropdown({ reportId, currentOfficerId, onAs
     useEffect(() => {
         const token = localStorage.getItem('admin_token');
         if (!token) return;
-        fetch('http://10.175.218.222:5005/api/reports/officers', {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
+        fetch(`${API_URL}/api/reports/officers`, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -36,7 +37,8 @@ export default function AssignOfficerDropdown({ reportId, currentOfficerId, onAs
         setSuccess(false);
         try {
             const token = localStorage.getItem('admin_token');
-            const res = await fetch(`http://10.175.218.222:5005/api/reports/${reportId}/assign`, {
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
+            const res = await fetch(`${API_URL}/api/reports/${reportId}/assign`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

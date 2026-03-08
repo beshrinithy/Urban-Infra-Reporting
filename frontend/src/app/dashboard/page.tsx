@@ -127,8 +127,8 @@ export default function Dashboard() {
     fetchHistory();
     checkHealth();
 
-    // 2. Real-Time Connection (Port 5001 fixed)
-    const socket = io("http://10.175.218.222:5005", {
+    // 2. Real-Time Connection
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005", {
       transports: ["websocket"], // Force websocket for better performance
       reconnectionAttempts: 5
     });

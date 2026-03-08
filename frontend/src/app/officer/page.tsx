@@ -93,7 +93,7 @@ export default function OfficerDashboard() {
         fetchReports();
 
         const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
-        const socket = io(API, { transports: ["websocket"] });
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || API, { transports: ["websocket"] });
 
         socket.on("statusUpdate", () => fetchReports());
         socket.on("report_updated", () => fetchReports());

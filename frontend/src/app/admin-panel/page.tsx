@@ -148,7 +148,7 @@ export default function AdminPanel() {
         setCurrentPage(1);
 
         // Socket Connection
-        const socket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005", { transports: ["websocket"] });
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005", { transports: ["websocket"] });
 
         socket.on("status_update", (data: { reportId: number }) => {
             console.log("Live Update:", data);
@@ -401,7 +401,7 @@ export default function AdminPanel() {
                         </MapContainer>
                     )}
                     <a
-                        href="http://localhost:3000"
+                        href={process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block mt-6 px-6 py-3 bg-gradient-to-r from-indigo-400 to-indigo-600 text-white rounded-lg font-semibold text-sm shadow-md hover:scale-105 transition-transform no-underline"
