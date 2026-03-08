@@ -1,10 +1,12 @@
 // This function now calls the Python AI Backend
-export async function analyzeIssue(description: string, existingDescriptions: string[] = []) {
+import { API_URL } from './config';
+
+export async function analyzeIssue(description: string, existingDescriptions: string = []) {
   try {
     // 1. Detect Duplicates
     let duplicateScore = 0;
     try {
-      const dupRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005"}/api/ai/detect/duplicate`, {
+      const dupRes = await fetch(`${API_URL}/api/ai/detect/duplicate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -20,7 +22,7 @@ export async function analyzeIssue(description: string, existingDescriptions: st
     }
 
     // 2. Predict Category
-    const catRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005"}/api/ai/predict/category`, {
+    const catRes = await fetch(`${API_URL}/api/ai/predict/category`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ description }),
@@ -37,7 +39,7 @@ export async function analyzeIssue(description: string, existingDescriptions: st
 
     const simulatedDupCount = duplicateScore > 0.75 ? 5 : 0;
 
-    const prioRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005"}/api/ai/predict/priority`, {
+    const prioRes = await fetch(`${API_URL}/api/ai/predict/priority`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

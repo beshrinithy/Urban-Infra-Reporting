@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { Camera, MapPin, Send, AlertTriangle, Image as ImageIcon, Loader2, CheckCircle, Brain, ArrowLeft } from "lucide-react";
 import { io } from "socket.io-client";
 import Link from "next/link";
+import { SOCKET_URL } from "../../lib/config";
 
 // Initialize Socket.io (Singleton-ish outside component)
-const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5005");
+const socket = io(SOCKET_URL);
 
 export default function ReportIssue() {
   const [title, setTitle] = useState("");

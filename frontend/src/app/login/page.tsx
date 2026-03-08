@@ -3,6 +3,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Lock, Mail, Loader2, CheckCircle, LogIn, Shield } from 'lucide-react';
 import Link from 'next/link';
+import { API_URL } from '../../lib/config';
 
 function LoginForm() {
     const router = useRouter();
@@ -28,7 +29,6 @@ function LoginForm() {
         setLoading(true);
 
         try {
-            const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5005";
             const res = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
